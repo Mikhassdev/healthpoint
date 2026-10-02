@@ -1,0 +1,215 @@
+{% load static role_tags %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tablero - HealthPoint</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v=11">
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}?v=2">
+</head>
+<body class="dashboard-body">
+
+  <!-- NAV (mismo que index) -->
+  <nav class="nav">
+  <div class="nav__inner">
+    <div class="nav__brand">
+      <a href="{% url 'index' %}">HealthPoint</a>
+    </div>
+
+    <div class="nav__actions">
+      {% if user.is_authenticated %}
+        {# ADMIN: solo ve Registrar (usuarios) #}
+        {% if user|has_group:"Administrador" %}
+          <a href="{% url 'registrar_usuario' %}" class="nav__btn">Registrar</a>
+        {% endif %}
+
+        {# SUPERVISOR y BODEGA: acceso a index y tablero #}
+        {% if user|has_group:"Supervisor" or user|has_group:"Bodega" %}
+          <a href="{% url 'index' %}" class="nav__btn">Index</a>
+        {% endif %}
+
+        {# ENFERMERO: solo Tablero #}
+        {% if user|has_group:"Enfermero" %}
+        {% endif %}
+
+        <form action="{% url 'logout' %}" method="post" class="nav__logout-form">
+          {% csrf_token %}
+          <button type="submit" class="nav__btn">Cerrar sesión</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="nav__btn">Iniciar sesión</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+  <!-- ENCABEZADO -->
+  <header class="dashboard-header">
+    <h2>Tablero de stock y movimientos</h2>
+    <p>Visualiza el estado general de insumos, boxes y movimientos registrados en el sistema.</p>
+  </header>
+
+  <!-- KPIs -->
+  <section class="kpi-section">
+    <div class="kpi-container">
+      <div class="kpi-box">
+        <div class="kpi-icon">🧴</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Insumos</span>
+          <span class="kpi-value">{{ insumos|length }}</span>
+        </div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-icon">🏥</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Boxes</span>
+          <span class="kpi-value">{{ boxes|length }}</span>
+        </div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-icon">🔄</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Movimientos</span>
+          <span class="kpi-value">{{ movimientos|length }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENIDO: tres tarjetas iguales, apiladas -->
+  <main class="dashboard-main stack-cards">
+
+    <!-- 1) Stock por insumo -->
+    <section class="card equal">
+      <h3 class="card-title">📦 Stock por insumo</h3>
+      <div class="table-wrapper fill">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Insumo</th>
+              <th>Unidad</th>
+              <th>Stock inicial</th>
+              <th>Stock mínimo</th>
+              <th>Stock actual</th>
+              <th>Estado</th>
+              <th>Acciones</th>  {# nueva columna #}
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in insumos %}
+            <tr>
+              <td>{{ i.nombre }}</td>
+              <td>{{ i.unidad }}</td>
+              <td>{{ i.stock_inicial }}</td>
+              <td>{{ i.stock_minimo }}</td>
+              <td>{{ i.stock_actual|default:0 }}</td>
+              <td>
+                {% if i.en_alerta %}
+                  <span class="badge danger">Crítico</span>
+                {% else %}
+                  <span class="badge success">OK</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if user|has_group:"Supervisor" %}
+                  <form action="{% url 'eliminar_insumo' i.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn"
+                            style="padding:6px 10px; font-size:12px; border-radius:999px; background:#ef4444;">
+                      Eliminar
+                    </button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">Sin insumos registrados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 2) Boxes registrados -->
+    <section class="card equal">
+      <h3 class="card-title">🏥 Boxes registrados</h3>
+      <div class="table-wrapper fill">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Responsable</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in boxes %}
+            <tr>
+              <td>{{ b.nombre }}</td>
+              <td>{{ b.responsable }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2">Sin boxes registrados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3) Últimos movimientos -->
+    <section class="card equal">
+      <h3 class="card-title">🔄 Últimos movimientos</h3>
+      <div class="table-wrapper fill">
+        <table class="styled-table">
+          <thead>
+  <tr>
+    <th>Fecha</th>
+    <th>Tipo</th>
+    <th>Insumo</th>
+    <th>Box</th>
+    <th>Cantidad</th>
+    <th>Nota</th>
+    <th>Registrado por</th>  {# 👈 nueva columna #}
+  </tr>
+</thead>
+<tbody>
+  {% for m in movimientos %}
+  <tr>
+    <td>{{ m.fecha|date:"d/m/Y" }}</td>
+    <td>
+      {% if m.tipo == 'ENTRADA' %}
+        <span class="badge success">ENTRADA</span>
+      {% else %}
+        <span class="badge danger">SALIDA</span>
+      {% endif %}
+    </td>
+    <td>{{ m.insumo.nombre }}</td>
+    <td>{{ m.box.nombre }}</td>
+    <td>{{ m.cantidad }}</td>
+    <td>{{ m.nota }}</td>
+    <td>
+      {% if m.usuario %}
+        {{ m.usuario.username }}
+      {% else %}
+        —  {# para movimientos viejos sin usuario #}
+      {% endif %}
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="7">Sin movimientos recientes.</td></tr>
+  {% endfor %}
+</tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p><strong>HealthPoint</strong> — Proyecto BackEnd</p>
+  </footer>
+
+</body>
+</html>

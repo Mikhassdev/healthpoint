@@ -1,0 +1,154 @@
+{% load static role_tags %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HealthPoint - Control de Insumos</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v=12">
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}?v=1">
+</head>
+<body class="home-body">
+
+  <nav class="nav">
+  <div class="nav__inner">
+    <div class="nav__brand">
+      <a href="{% url 'index' %}">HealthPoint</a>
+    </div>
+
+    <div class="nav__actions">
+      {% if user.is_authenticated %}
+        {# ADMIN: solo ve Registrar (usuarios) #}
+        {% if user|has_group:"Administrador" %}
+          <a href="{% url 'registrar_usuario' %}" class="nav__btn">Registrar</a>
+        {% endif %}
+
+        {# SUPERVISOR y BODEGA: acceso a index y tablero #}
+        {% if user|has_group:"Supervisor" or user|has_group:"Bodega" %}
+          <a href="{% url 'tablero' %}" class="nav__btn">Tablero</a>
+        {% endif %}
+
+        {# ENFERMERO: solo Tablero #}
+        {% if user|has_group:"Enfermero" %}
+        {% endif %}
+
+        <form action="{% url 'logout' %}" method="post" class="nav__logout-form">
+          {% csrf_token %}
+          <button type="submit" class="nav__btn">Cerrar sesión</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="nav__btn">Iniciar sesión</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+  {% if messages %}
+  <div id="toast-root" aria-live="polite" aria-atomic="true">
+    {% for message in messages %}
+      <div class="hp-toast {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <header class="hero">
+    <img src="{% static 'img/Portada.png' %}?v=3" alt="Portada HealthPoint - Control de insumos" />
+  </header>
+
+  <section class="welcome" aria-label="Bienvenida e instrucciones">
+    <div class="welcome__inner">
+      <h1>Bienvenido a HealthPoint</h1>
+      <p class="lead">
+        Registra insumos, administra boxes y controla entradas/salidas de forma simple y trazable.
+      </p>
+      <ol class="steps">
+        <li><strong>Insumos:</strong> crea cada insumo (nombre, unidad y stock inicial).</li>
+        <li><strong>Box:</strong> registra los boxes (salas/puestos) y su responsable.</li>
+        <li><strong>Movimientos:</strong> usa <em>ENTRADA</em> para sumar stock y <em>SALIDA</em> para consumir por box.</li>
+        <li><strong>Buenas prácticas:</strong> no registres salidas mayores al stock disponible.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section-title" id="titulo-formularios" aria-label="Ir a formularios">
+    <div class="section-title__inner">
+      <h2>Registro de formularios</h2>
+      <p class="muted">Completa el que corresponda: Insumos, Box o Movimientos.</p>
+    </div>
+  </section>
+
+  <section class="forms-section" aria-label="Registro rápido">
+    <div class="forms-container">
+
+      <!-- Insumos -->
+      <div class="form-card">
+        <h3>Registrar Insumo</h3>
+        <form action="{% url 'insert_insumo' %}" method="POST">
+          {% csrf_token %}
+          <label>Nombre
+            <input type="text" name="nombre" placeholder="Guantes nitrilo M" />
+          </label>
+          <label>Unidad
+            <input type="text" name="unidad" placeholder="unidad / caja / paquete" />
+          </label>
+          <label>Stock inicial
+            <input type="number" name="stock" min="0" step="1" value="" />
+          </label>
+          <button type="submit" class="btn">Guardar insumo</button>
+        </form>
+      </div>
+
+      <!-- Box -->
+      <div class="form-card">
+        <h3>Registrar Box</h3>
+        <form action="{% url 'insert_box' %}" method="POST">
+          {% csrf_token %}
+          <label>Nombre del box
+            <input type="text" name="nombre" placeholder="Box 1" />
+          </label>
+          <label>Responsable
+            <input type="text" name="responsable" placeholder="Dra. Pérez" />
+          </label>
+          <button type="submit" class="btn">Guardar box</button>
+        </form>
+      </div>
+
+      <!-- Movimientos -->
+      <div class="form-card">
+        <h3>Registrar Movimiento</h3>
+        <div class="muted" style="font-size: 12px; margin-bottom: 6px;">
+  Registrado por: <strong>{{ request.user.username }}</strong>
+</div>
+        <form action="{% url 'insert_movimiento' %}" method="POST">
+          {% csrf_token %}
+          <label>Tipo
+            <select name="tipo">
+              <option value="" disabled selected>Selecciona…</option>
+              <option value="ENTRADA">ENTRADA</option>
+              <option value="SALIDA">SALIDA</option>
+            </select>
+          </label>
+          <label>Insumo
+            <input type="text" name="insumo" placeholder="Guantes nitrilo M"  />
+          </label>
+          <label>Cantidad
+            <input type="number" name="cantidad" min="1" step="1" />
+          </label>
+          <label>Box
+            <input type="text" name="box" placeholder="Box 1" />
+          </label>
+          <button type="submit" class="btn">Registrar</button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p><strong>HealthPoint</strong> - Proyecto BackEnd</p>
+  </footer>
+
+  <script src="{% static 'js/app.js' %}?v=5" defer></script>
+
+</body>
+</html>

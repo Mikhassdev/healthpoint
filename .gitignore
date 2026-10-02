@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Base de datos local y datos de prueba
+db.sqlite3
+Usuarios.txt
+
+# Variables de entorno
+.env

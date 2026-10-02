@@ -1,0 +1,632 @@
+/* ===== Paleta ===== */
+:root{
+  --nav-h: 64px;
+
+  --ink:#0b2239;
+  --muted:#5d6b7a;
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --stroke:#e6e9f0;
+
+  --accent:#3258b8;     /* azul oscuro */
+  --accent-2:#2da4da;   /* azul claro */
+
+  --radius:12px;
+  --shadow:0 8px 24px rgba(12,35,69,.08);
+  --font:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+
+/* ===== Base ===== */
+*{box-sizing:border-box}
+html,body{height:100%}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:var(--font);
+  color:var(--ink);
+  background:var(--bg);
+}
+h1,h2,h3{margin:0 0 12px}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+
+/* ========================= */
+/*  NAVBAR HEALTHPOINT       */
+/* ========================= */
+
+.nav {
+  position: fixed;                 /* barra fija arriba */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  background: linear-gradient(90deg, #1f3b72, #345fa8); /* mismo estilo que footer */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+}
+
+/* Contenedor interno: izquierda (brand) + derecha (botones) */
+.nav__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* brand izq / botones der */
+}
+
+/* Marca izquierda */
+.nav__brand a {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* Contenedor de botones (derecha) */
+.nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Mismo estilo para enlaces y botón */
+.nav__btn {
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.20);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.1s ease;
+}
+
+.nav__btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.nav__btn:active {
+  transform: translateY(0);
+}
+
+/* Que el form de logout no rompa el layout */
+.nav__logout-form {
+  margin: 0;
+  display: inline-block;
+}
+
+.nav__logout-form button {
+  font-family: inherit;
+}
+
+/* Forzar color blanco en los links del nav */
+.nav__brand a,
+.nav__btn {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+/* ===== Portada ===== */
+.hero img{ width:100%; height:auto; display:block }
+
+/* ===== Bienvenida (tarjeta redondeada) ===== */
+.welcome{ width:100%; background:#fff; padding:40px 16px }
+.welcome__inner{
+  max-width:1000px; margin:0 auto; padding:28px 24px;
+  background:#fff; border:2px solid #000; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+.welcome h1{ text-align:center }
+.welcome .lead{ text-align:center; color:var(--muted); margin-bottom:14px }
+.steps{ margin:0; padding-left:18px; line-height:1.6 }
+.steps em{ font-style:normal; color:var(--accent-2); font-weight:700 }
+
+/* ===== Título intermedio (sin línea) ===== */
+.section-title{
+  width:100%; background:#fff; padding:28px 16px 8px;
+  scroll-margin-top:calc(var(--nav-h) + 10px); /* ancla visible bajo navbar */
+}
+.section-title__inner{ max-width:1100px; margin:0 auto; padding:0 16px }
+.section-title h2{ text-align:center; font-size:clamp(22px,3vw,28px) }
+.section-title .muted{ text-align:center }
+
+/* ===== Formularios: fila simétrica ===== */
+.forms-section{ width:100%; padding:28px 16px 48px; background:#fafafa }
+.forms-container{
+  max-width:1200px; margin:0 auto;
+  display:flex; gap:24px; justify-content:center; align-items:stretch; flex-wrap:wrap;
+}
+.form-card{
+  flex:1 1 320px; max-width:360px; background:#fff;
+  border:2px solid #000; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,.08);
+  padding:20px; display:flex; flex-direction:column;
+}
+.form-card h3{ color:var(--accent); text-align:center; margin-bottom:8px }
+
+/* Form contenido y controles */
+.form-card form{ display:flex; flex-direction:column; gap:10px; height:100% }
+.form-card label{ display:grid; gap:6px; font-weight:600; color:var(--ink) }
+.form-card input, .form-card select{
+  width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; font-size:14px;
+  outline:none; transition:border .15s, box-shadow .15s;
+}
+.form-card input:focus, .form-card select:focus{
+  border-color:var(--accent-2); box-shadow:0 0 0 4px rgba(45,164,218,.18);
+}
+
+/* Botones idénticos y alineados al fondo */
+.btn{
+  margin-top:auto;               /* empuja el botón al final de la tarjeta */
+  padding:12px 16px; border:0; border-radius:999px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:#fff; font-weight:800; cursor:pointer; box-shadow:var(--shadow);
+  transition:filter .2s ease;
+}
+.btn:hover{ filter:brightness(1.05) }
+
+/* ===== Feedback de validación reactiva ===== */
+.hp-error{
+  font-size: 12px;
+  margin-top: 4px;
+  color: #c62828;         /* rojo sutil */
+}
+input.invalid, select.invalid{
+  border-color: #c62828 !important;
+  box-shadow: 0 0 0 4px rgba(198,40,40,.08) !important;
+}
+
+/* ===================================================================== */
+/* ============================= TABLERO ================================ */
+/* ===================================================================== */
+
+.dashboard-body {
+  background: linear-gradient(180deg, #f1f5ff 0%, #e9eef8 100%);
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-top: calc(var(--nav-h) + 32px); /* espacio debajo del navbar */
+  color: #1f2a44;
+}
+
+.dashboard-header h2 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+.dashboard-header p {
+  color: #6b7280;
+  font-size: 15px;
+}
+
+/* === KPIs === */
+.kpi-section {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0;
+}
+.kpi-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  width: 90%;
+  max-width: 1100px;
+}
+.kpi-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(145deg, #ffffff, #f8fbff);
+  border: 1px solid #dfe4ee;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 6px 20px rgba(10,25,41,.07);
+  transition: transform .2s ease;
+}
+.kpi-box:hover { transform: translateY(-5px); }
+.kpi-icon { font-size: 32px; }
+.kpi-label { font-size: 13px; color: #6b7280; }
+.kpi-value { font-size: 22px; font-weight: bold; color: #1f2a44; }
+
+/* === Contenedor general del tablero === */
+.dashboard-main {
+  width: 92%;
+  max-width: 1180px;            /* + ancho para respirar mejor */
+  margin: 0 auto 60px auto;
+  flex: 1;                      /* permite empujar el footer al fondo */
+}
+
+/* Tres tarjetas apiladas, del mismo tamaño visual */
+.stack-cards{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 26px;
+  margin-bottom: 64px;
+}
+.card{
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .05);
+  padding: 16px 20px 24px;
+}
+.card.equal{
+  min-height: 360px;            /* altura base: evita que se vean pequeñas */
+  display: flex;
+  flex-direction: column;
+}
+.card-title{
+  font-size: 18px;
+  color: #1f2a44;
+  border-left: 4px solid #4c8dff;
+  padding-left: 8px;
+  margin-bottom: 12px;
+}
+
+/* Tablas ocupan todo el alto disponible dentro de la tarjeta */
+.table-wrapper{ overflow-x:auto; }
+.table-wrapper.fill{
+  flex: 1;                      /* estira el wrapper para llenar la tarjeta */
+  display:flex;
+  flex-direction:column;
+}
+.table-wrapper.fill .styled-table{ height:100%; }
+
+/* === Tablas === */
+.styled-table{
+  width:100%;
+  border-collapse: collapse;
+  background:#fafbff;
+  font-size:14.5px;
+}
+.styled-table thead{
+  background:#f0f4ff;
+  color:#223354;
+}
+.styled-table th, .styled-table td{
+  padding:12px 14px;            /* más aire en filas */
+  border-bottom:1px solid #e2e8f0;
+}
+.styled-table tbody tr:hover{ background:#f9fcff; }
+
+.badge{
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px; font-weight:600;
+}
+.badge.success{ background:#e6f9f0; color:#047857; }
+.badge.danger{  background:#ffe9e9; color:#c62828; }
+
+/* Ampliar aún más en pantallas grandes */
+@media (min-width:1400px){
+  .dashboard-main{ max-width:1280px; }
+}
+
+/* ===== Footer pegado abajo (unificado) ===== */
+.footer {
+  background: linear-gradient(90deg, #1f3b72, #345fa8);
+  color: #fff;
+  text-align: center;
+  padding: 14px 0;
+  font-size: 14px;
+  margin-top: auto;             /* se queda al fondo */
+  border-top: 3px solid #000;   /* mantiene detalle oscuro del proyecto */
+}
+
+/* ==== Overrides: altura automática por contenido (tablero) ==== */
+.card.equal{ min-height: unset; }
+.table-wrapper.fill{ flex: initial; }
+.table-wrapper.fill .styled-table{ height: auto; }
+.styled-table th, .styled-table td{ padding: 10px 12px; }
+.stack-cards{ gap: 22px; }
+.card{ box-shadow: 0 3px 12px rgba(0,0,0,.045); }
+
+/* ===================================================================== */
+/* ============================= HOME / INDEX =========================== */
+/* ===================================================================== */
+
+/* Fondo y layout como el dashboard */
+.home-body{
+  background: linear-gradient(180deg, #f1f5ff 0%, #e9eef8 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Bienvenida con bordes y sombras suaves */
+.home-body .welcome{ background: transparent; padding-top: 28px; }
+.home-body .welcome__inner{
+  background:#fff;
+  border:1px solid #dfe4ee;         /* reemplaza borde negro */
+  border-radius:16px;
+  box-shadow:0 6px 20px rgba(10,25,41,.06);
+}
+.home-body .welcome h1{ color:#1f2a44; }
+.home-body .steps{ color:#0b2239; }
+
+/* Título de sección */
+.home-body .section-title{
+  background: transparent;
+  padding: 24px 16px 6px;
+}
+.home-body .section-title h2{
+  color:#1f2a44;
+  letter-spacing:.2px;
+}
+.home-body .section-title .muted{ color:#6b7280; }
+
+/* Formularios: mismo ancho y aire que el tablero */
+.home-body .forms-section{ background: transparent; padding: 16px 16px 48px; }
+.home-body .forms-container{ max-width:1100px; gap:24px; }
+
+/* Tarjetas de formularios estilo "card" */
+.home-body .form-card{
+  max-width:360px;
+  background:#fff;
+  border:1px solid #dfe4ee;         /* reemplaza borde negro */
+  border-radius:16px;
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
+  padding:18px 18px 20px;
+}
+.home-body .form-card h3{
+  color:#1f2a44; margin-bottom:14px; font-weight:800;
+  display:flex; align-items:center; gap:10px;
+  border-left:4px solid #4c8dff; padding-left:8px; /* detalle como tablero */
+}
+
+/* Inputs y selects con focus ring consistente */
+.home-body .form-card label{ color:#1f2a44; font-weight:700; }
+.home-body .form-card input,
+.home-body .form-card select{
+  border:1px solid #e2e8f0; background:#fff; border-radius:10px;
+  padding:11px 12px; font-size:14.5px;
+  transition:border .15s, box-shadow .15s, background .15s;
+}
+.home-body .form-card input:focus,
+.home-body .form-card select:focus{
+  border-color:#4c8dff;
+  box-shadow:0 0 0 4px rgba(76,141,255,.18);
+}
+
+/* Botón del home (idéntico al tablero) */
+.home-body .btn{
+  background: linear-gradient(90deg, #3258b8, #2da4da);
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(12,35,69,.08);
+  font-weight: 800;
+}
+
+/* Footer al fondo también en home */
+.home-body .footer{ margin-top:auto; }
+
+/* === Toast (mensajes Django) === */
+#toast-root{
+  position: fixed;
+  top: calc(var(--nav-h) + 12px);
+  right: 16px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hp-toast{
+  background: #1f3b72;     /* base */
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  min-width: 260px;
+  max-width: 360px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  border: 1px solid rgba(255,255,255,.15);
+  opacity: 0;
+  transform: translateY(-8px);
+  animation: hp-toast-in .25s ease forwards;
+  cursor: pointer;
+}
+.hp-toast.success{ background: #10B981; } /* verde */
+.hp-toast.error{ background: #EF4444; }   /* rojo */
+.hp-toast.info{ background: #3B82F6; }    /* azul */
+.hp-toast.warning{ background: #F59E0B; } /* ámbar */
+
+@keyframes hp-toast-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================================================================== */
+/* ============================= LOGIN SPLIT ============================ */
+/* ===================================================================== */
+
+.login-page{
+  min-height:100vh;
+  margin:0;
+  background: linear-gradient(135deg,#e4efff,#f5f7fb);
+  display:flex;
+  flex-direction:column;
+}
+
+.login-shell{
+  flex:1;
+  display:flex;
+  align-items:center;       /* centrado vertical */
+  justify-content:center;
+  padding:24px 16px;
+}
+
+.login-grid{
+  width:100%;
+  max-width:900px;
+  background:#fff;
+  border-radius:24px;
+  box-shadow:0 18px 55px rgba(15,35,75,.18);
+  overflow:hidden;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  min-height:420px;         /* altura razonable, no se alarga tanto */
+}
+
+/* Lado izquierdo: imagen */
+.login-hero{
+  position:relative;
+  background: linear-gradient(135deg,#24406d,#3e6fb4); /* azul oscuro → azul medio */
+}
+
+.login-hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(0,0,0,.18),rgba(0,0,0,.05)); /* leve sombra encima */
+}
+
+.login-hero-overlay{
+  position:relative;
+  z-index:1;
+  color:#fff;
+  padding:32px 32px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;   /* centrado vertical */
+  height:100%;
+}
+
+.login-hero-overlay h1{
+  font-size:26px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.login-hero-overlay p{
+  max-width:320px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.login-hero-overlay .muted{
+  color:#e5ecff;   /* mucho más visible */
+  opacity:1;
+  font-size:13px;
+}
+
+/* Lado derecho: panel de login */
+.login-panel{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:32px;
+  background:#f7f9ff;
+}
+.login-card{
+  width:100%;
+  max-width:360px;
+  background:#fff;
+  border-radius:18px;
+  padding:28px 26px 24px;
+  box-shadow:0 10px 30px rgba(15,35,75,.10);
+}
+.login-logo-wrap{
+  display:flex;
+  justify-content:center;
+  margin-bottom:12px;
+}
+.login-logo{
+  width:60px;
+  height:60px;
+  border-radius:16px;
+}
+.login-title{
+  text-align:center;
+  font-size:20px;
+  color:#1f3b72;
+  margin-bottom:16px;
+}
+.login-error{
+  background:#ffe4e4;
+  color:#b3261e;
+  border-radius:10px;
+  padding:10px;
+  font-size:13px;
+  margin-bottom:12px;
+}
+.login-form{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.login-form label{
+  font-size:14px;
+  color:#1f2933;
+  display:grid;
+  gap:6px;
+}
+.login-form input{
+  padding:10px 11px;
+  border-radius:10px;
+  border:1px solid #d0d7e5;
+  font-size:14px;
+  outline:none;
+  transition:border .16s, box-shadow .16s, background .16s;
+}
+.login-form input:focus{
+  border-color:#3258b8;
+  box-shadow:0 0 0 3px rgba(50,88,184,.20);
+  background:#f9fbff;
+}
+.login-btn{
+  width:100%;
+  margin-top:10px;
+  justify-content:center;
+}
+/* Footer – mejor contraste */
+.footer {
+  margin-top: 40px;
+  padding: 14px 0;
+  text-align: center;
+  background: #1e3253; /* azul más suave que el borde */
+  color: #ffffff;      /* texto blanco para buen contraste */
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  opacity: 0.95;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer strong {
+  font-weight: 600;
+  color: #ffffff;
+}
+/* Responsivo: apilar en pantallas pequeñas */
+@media (max-width:900px){
+  .login-shell{ padding:20px 12px; }
+  .login-grid{
+    max-width:480px;
+    grid-template-columns:1fr;
+  }
+  .login-hero{
+    min-height:160px;
+  }
+  .login-hero-overlay{
+    padding:20px 18px;
+  }
+}
+
+.field-error{
+  font-size: 12px;
+  color: #e11d48;           /* rojo */
+  margin-top: 2px;
+}
+
+.input-error{
+  border-color: #e11d48 !important;
+  box-shadow: 0 0 0 2px rgba(225,29,72,0.18);
+}
+
+.nav__brand a,
+.nav__btn {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}

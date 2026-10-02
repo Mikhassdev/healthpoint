@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Registrar usuario - HealthPoint</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}?v=1">
+</head>
+<body class="home-body">
+
+  <!-- NAV igual que index/tablero -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <div class="nav__brand">
+        <a href="{% url 'index' %}">HealthPoint</a>
+      </div>
+      <div class="nav__actions">
+        {% if user.is_authenticated %}
+          <form action="{% url 'logout' %}" method="post" class="nav__logout-form">
+            {% csrf_token %}
+            <button type="submit" class="nav__btn">Cerrar sesión</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="nav__btn">Iniciar sesión</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main style="flex:1; display:flex; justify-content:center; align-items:center; padding:40px 16px 32px;">
+
+    <section class="form-card" style="max-width:480px; width:100%;">
+      <header style="margin-bottom:14px;">
+        <h3 style="margin:0 0 6px; color:#1f2a44;">Registrar nuevo usuario</h3>
+        <p class="muted" style="margin:0; font-size:13px;">
+          Crea cuentas para Supervisor, Bodega, Enfermería o nuevos administradores del sistema.
+        </p>
+      </header>
+
+      {% if messages %}
+        <div style="margin-bottom:10px;">
+          {% for message in messages %}
+            <div class="hp-toast {{ message.tags }}" style="position:static; margin-bottom:6px;">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        <div class="login-error" style="margin-bottom:10px;">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <form method="post" novalidate id="register-form">
+        {% csrf_token %}
+
+        <label>
+          Nombre de usuario
+          {{ form.username }}
+          <span class="field-error">
+            {% if form.username.errors %}{{ form.username.errors.0 }}{% endif %}
+          </span>
+        </label>
+
+        <label>
+          Nombre
+          {{ form.first_name }}
+          <span class="field-error">
+            {% if form.first_name.errors %}{{ form.first_name.errors.0 }}{% endif %}
+          </span>
+        </label>
+
+        <label>
+          Apellidos
+          {{ form.last_name }}
+          <span class="field-error">
+            {% if form.last_name.errors %}{{ form.last_name.errors.0 }}{% endif %}
+          </span>
+        </label>
+
+        <label>
+          Correo electrónico
+          {{ form.email }}
+          <span class="field-error">
+            {% if form.email.errors %}{{ form.email.errors.0 }}{% endif %}
+          </span>
+        </label>
+
+        <label>
+          Rol
+          {{ form.role }}
+          <span class="field-error">
+            {% if form.role.errors %}{{ form.role.errors.0 }}{% endif %}
+          </span>
+        </label>
+
+        <label>
+          Contraseña
+          {{ form.password1 }}
+          <span class="field-error">
+            {% if form.password1.errors %}{{ form.password1.errors.0 }}{% endif %}
+          </span>
+        </label>
+
+        <label>
+          Repetir contraseña
+          {{ form.password2 }}
+          <span class="field-error">
+            {% if form.password2.errors %}{{ form.password2.errors.0 }}{% endif %}
+          </span>
+        </label>
+
+        <button type="submit" class="btn" style="margin-top:16px;">
+          Crear usuario
+        </button>
+      </form>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p><strong>HealthPoint</strong> — Proyecto BackEnd</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="{% static 'js/app.js' %}?v=11" defer></script>
+
+</body>
+</html>

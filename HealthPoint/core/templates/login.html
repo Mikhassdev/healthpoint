@@ -1,0 +1,82 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso a HealthPoint</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="icon" href="{% static 'img/favicon.png' %}">
+</head>
+
+<body class="login-page">
+
+  <main class="login-shell">
+    <section class="login-grid">
+
+      <!-- LADO IZQUIERDO -->
+      <div class="login-hero">
+        <div class="login-hero-overlay">
+          <h1>HealthPoint</h1>
+          <p>Sistema de Control de Insumos Médicos</p>
+          <p class="muted">
+            Trazabilidad en tiempo real, alertas de stock crítico y respaldo para la gestión clínica.
+          </p>
+        </div>
+      </div>
+
+      <!-- LADO DERECHO: FORMULARIO -->
+      <div class="login-panel">
+        <div class="login-card">
+
+          <div class="login-logo-wrap">
+            <img src="{% static 'img/favicon.png' %}" alt="HealthPoint" class="login-logo">
+          </div>
+
+          <h2 class="login-title">Acceso a HealthPoint</h2>
+
+          {% if form.errors %}
+          <div class="login-error">
+            ⚠ Usuario o contraseña incorrectos. Intenta nuevamente.
+          </div>
+          {% endif %}
+
+          <form method="post" action="{% url 'login' %}" class="login-form" id="login-form">
+
+            {% csrf_token %}
+
+            <label>
+              Usuario
+              {{ form.username }}
+              <span class="field-error" data-error-for="username"></span>
+            </label>
+
+            <label>
+              Contraseña
+              {{ form.password }}
+              <span class="field-error" data-error-for="password"></span>
+            </label>
+
+            <button type="submit" class="btn login-btn">
+              Iniciar Sesión
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+      <p><strong>HealthPoint</strong> — Proyecto BackEnd</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="{% static 'js/app.js' %}"></script>
+
+</body>
+</html>
