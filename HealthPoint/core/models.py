@@ -1,6 +1,5 @@
 from django.db import models
-from django.conf import settings  # (lo necesitaremos más abajo para usuario)
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class Insumo(models.Model):
     nombre = models.CharField(max_length=80, unique=True)
@@ -35,9 +34,9 @@ class Movimiento(models.Model):
     cantidad = models.PositiveIntegerField()
     nota = models.CharField(max_length=200, blank=True)
 
-    # NUEVO: quién generó el movimiento (opcional por ahora)
+    # Quién registró el movimiento (los registros antiguos pueden no tenerlo)
     usuario = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         null=True,
         blank=True,
@@ -47,5 +46,3 @@ class Movimiento(models.Model):
     def __str__(self):
         return f"{self.tipo} - {self.insumo} ({self.cantidad})"
 
-
-# Create your models here.

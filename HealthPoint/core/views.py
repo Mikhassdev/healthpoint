@@ -1,19 +1,17 @@
-from django.shortcuts import render, redirect, get_object_or_404
+import math
+
+from django.contrib import messages
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Sum, Q, Case, When, IntegerField, Value, F, BooleanField
 from django.db.models.deletion import RestrictedError
 from django.db.models.functions import Coalesce
-from django.contrib import messages
-from .models import Insumo, Box, Movimiento
-from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import Group, User
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login as auth_login
-from .forms import UserCreateForm
-from django.urls import reverse_lazy
-from django.contrib.auth.views import LoginView
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-import math
+
+from .forms import UserCreateForm
+from .models import Insumo, Box, Movimiento
 
 # ==============================
 # Helpers de roles / grupos
@@ -87,40 +85,13 @@ def login_view(request):
 
     return render(request, "login.html", {"form": form})
 
-# ---------- Página que cada rol puede ver de inicio ----------
-
-class RoleBasedLoginView(LoginView):
-    template_name = "login.html"  # ya la estás usando
-
-    def get_success_url(self):
-        user = self.request.user
-
-        # 1) ADMIN → solo registrar usuarios
-        if is_admin_user(user):
-            return reverse_lazy("registrar_usuario")
-
-        # 2) ENFERMERO → solo tablero
-        if is_enfermero(user):
-            return reverse_lazy("tablero")
-
-        # 3) SUPERVISOR y BODEGA → trabajan con formularios (index)
-        if can_manage_data(user):
-            return reverse_lazy("index")
-
-        # 4) Cualquier otro que al menos pueda ver tablero
-        if can_view_tablero(user):
-            return reverse_lazy("tablero")
-
-        # 5) Fallback: por si acaso
-        return reverse_lazy("index")
-
 @login_required
 @user_passes_test(can_manage_data)
 def index(request):
     return render(request, 'index.html')
 
 
-# ---------- Reemplazos de insert_*.php ----------
+# ---------- Registro de insumos, boxes y movimientos ----------
 @login_required
 @user_passes_test(can_manage_data)
 def insert_insumo(request):
