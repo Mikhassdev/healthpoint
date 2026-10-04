@@ -26,7 +26,7 @@
 
         {# SUPERVISOR y BODEGA: acceso a index y tablero #}
         {% if user|has_group:"Supervisor" or user|has_group:"Bodega" %}
-          <a href="{% url 'index' %}" class="nav__btn">Index</a>
+          <a href="{% url 'index' %}" class="nav__btn">Panel de registro</a>
         {% endif %}
 
         {# ENFERMERO: solo Tablero #}
