@@ -136,6 +136,9 @@ class PanelRegistroTest(BaseTest):
         self.assertIn('<option value="Guantes nitrilo M">', html)
         self.assertIn('<option value="Box 1">', html)
 
+    def test_formulario_de_movimiento_incluye_nota(self):
+        self.assertContains(self.client.get(reverse("index")), 'name="nota"')
+
 
 class AdminTest(BaseTest):
 
@@ -154,8 +157,10 @@ class RegistrarMovimientoTest(BaseTest):
         return self.client.post(reverse("insert_movimiento"), datos, follow=True)
 
     def test_entrada_valida(self):
-        self.registrar()
-        self.assertEqual(Movimiento.objects.count(), 1)
+        self.registrar(nota="Reposición mensual")
+        movimiento = Movimiento.objects.get()
+        self.assertEqual(movimiento.nota, "Reposición mensual")
+        self.assertEqual(movimiento.usuario, self.supervisor)
 
     def test_cantidad_negativa_se_rechaza_sin_error_500(self):
         respuesta = self.registrar(cantidad="-5")
