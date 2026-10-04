@@ -140,6 +140,18 @@ class PanelRegistroTest(BaseTest):
         self.assertContains(self.client.get(reverse("index")), 'name="nota"')
 
 
+class CargarDemoTest(TestCase):
+
+    def test_crea_datos_y_se_puede_repetir(self):
+        from io import StringIO
+        from django.core.management import call_command
+        call_command("cargar_demo", stdout=StringIO())
+        call_command("cargar_demo", stdout=StringIO())  # ejecutarlo dos veces no duplica datos
+        self.assertEqual(User.objects.filter(username__endswith="_demo").count(), 4)
+        self.assertEqual(Movimiento.objects.count(), 4)
+        self.assertTrue(self.client.login(username="enfermero_demo", password="demo-healthpoint"))
+
+
 class AdminTest(BaseTest):
 
     def test_modelos_disponibles_en_el_admin(self):
