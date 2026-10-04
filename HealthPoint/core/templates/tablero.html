@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tablero - HealthPoint</title>
-  <link rel="stylesheet" href="{% static 'styles.css' %}?v=11">
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v=13">
   <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}?v=2">
 </head>
 <body class="dashboard-body">
@@ -121,13 +121,10 @@
               </td>
               <td>
                 {% if puede_eliminar %}
-                  <form action="{% url 'eliminar_insumo' i.id %}" method="post" style="display:inline;">
+                  <form action="{% url 'eliminar_insumo' i.id %}" method="post" class="form-inline"
+                        data-confirm="¿Eliminar el insumo «{{ i.nombre }}»? Esta acción no se puede deshacer.">
                     {% csrf_token %}
-                    <button type="submit"
-                            class="btn"
-                            style="padding:6px 10px; font-size:12px; border-radius:999px; background:#ef4444;">
-                      Eliminar
-                    </button>
+                    <button type="submit" class="btn btn--danger btn--sm">Eliminar</button>
                   </form>
                 {% endif %}
               </td>
@@ -219,7 +216,7 @@
     <p><strong>HealthPoint</strong> — Proyecto BackEnd</p>
   </footer>
 
-  <script src="{% static 'js/app.js' %}?v=7" defer></script>
+  <script src="{% static 'js/app.js' %}?v=8" defer></script>
 
 </body>
 </html>

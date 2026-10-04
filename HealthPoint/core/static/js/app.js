@@ -493,3 +493,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+
+// --- Confirmación antes de acciones destructivas ---
+// Cualquier formulario con data-confirm pide confirmación antes de enviarse.
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('form[data-confirm]').forEach(form => {
+    form.addEventListener('submit', (e) => {
+      if (!window.confirm(form.dataset.confirm)) e.preventDefault();
+    });
+  });
+});

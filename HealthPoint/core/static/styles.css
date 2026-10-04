@@ -630,3 +630,7 @@ input.invalid, select.invalid{
   color: #ffffff !important;
   text-decoration: none !important;
 }
+/* Botón de eliminar en el tablero (antes con estilos en línea) */
+.form-inline { display: inline; }
+.btn--sm { padding: 6px 10px; font-size: 12px; border-radius: 999px; }
+.btn--danger { background: #ef4444; }
