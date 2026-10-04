@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const re = {
     letters: /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/,
     alnum:   /^[A-Za-z0-9ÁÉÍÓÚÑáéíóúñ\s]+$/,
+    // Nombres reales: "Jeringa 5 ml", "Mascarilla N95", "Box 2-A", "Dra. Pérez"
+    texto:   /^[A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ\s.,\-\/()%°#]+$/,
     number:  /^\d+$/
   };
 
@@ -14,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     required: 'Este campo es obligatorio.',
     letters:  'Solo letras (incluye tildes y espacios).',
     alnum:    'Solo letras y números (incluye espacios).',
+    texto:    'Usa letras, números, espacios y . , - / ( ) % ° #',
     number:   'Solo números enteros positivos.',
     gt0:      'Debe ser un entero mayor a 0.',
     ge0:      'Debe ser un entero mayor o igual a 0.'
@@ -61,6 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (rule === 'alnum' && !re.alnum.test(raw)) {
       if (display) setError(input, msg.alnum);
+      return false;
+    }
+    if (rule === 'texto' && !re.texto.test(raw)) {
+      if (display) setError(input, msg.texto);
       return false;
     }
     if (rule === 'number') {
@@ -115,13 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rules = {
       insumo: {
-        nombre:   (el, disp)=>validateInput(el,'letters',{required:true}, disp),
-        unidad:   (el, disp)=>validateInput(el,'letters',{required:true}, disp),
+        nombre:   (el, disp)=>validateInput(el,'texto',{required:true}, disp),
+        unidad:   (el, disp)=>validateInput(el,'texto',{required:true}, disp),
         stock:    (el, disp)=>validateInput(el,'number',{required:true, ge0:true}, disp),
       },
       box: {
-        nombre:       (el, disp)=>validateInput(el,'alnum',{required:true}, disp),
-        responsable:  (el, disp)=>validateInput(el,'letters',{required:true}, disp),
+        nombre:       (el, disp)=>validateInput(el,'texto',{required:true}, disp),
+        responsable:  (el, disp)=>validateInput(el,'texto',{required:true}, disp),
       },
       mov: {
         tipo:     validateSelect,
