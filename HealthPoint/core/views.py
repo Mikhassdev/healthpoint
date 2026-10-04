@@ -218,6 +218,11 @@ def insert_movimiento(request):
             messages.error(request, "La cantidad debe ser un número entero.")
             return redirect("index")
 
+        # El min="1" del formulario HTML se puede saltar; el servidor debe validarlo igual.
+        if cantidad < 1:
+            messages.error(request, "La cantidad debe ser mayor a 0.")
+            return redirect("index")
+
         # 3) Buscar insumo y box
         try:
             insumo = Insumo.objects.get(nombre=insumo_nombre)

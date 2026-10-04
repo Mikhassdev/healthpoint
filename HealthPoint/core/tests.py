@@ -52,3 +52,28 @@ class EliminarInsumoTest(BaseTest):
         self.assertEqual(respuesta.status_code, 200)
         self.assertTrue(Insumo.objects.filter(id=self.insumo.id).exists())
         self.assertContains(respuesta, "tiene movimientos registrados")
+
+
+class RegistrarMovimientoTest(BaseTest):
+
+    def registrar(self, **cambios):
+        datos = {"tipo": "ENTRADA", "insumo": self.insumo.nombre, "box": self.box.nombre, "cantidad": "3"}
+        datos.update(cambios)
+        return self.client.post(reverse("insert_movimiento"), datos, follow=True)
+
+    def test_entrada_valida(self):
+        self.registrar()
+        self.assertEqual(Movimiento.objects.count(), 1)
+
+    def test_cantidad_negativa_se_rechaza_sin_error_500(self):
+        respuesta = self.registrar(cantidad="-5")
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertEqual(Movimiento.objects.count(), 0)
+
+    def test_cantidad_cero_se_rechaza(self):
+        self.registrar(cantidad="0")
+        self.assertEqual(Movimiento.objects.count(), 0)
+
+    def test_salida_mayor_al_stock_se_rechaza(self):
+        self.registrar(tipo="SALIDA", cantidad="11")
+        self.assertEqual(Movimiento.objects.count(), 0)
