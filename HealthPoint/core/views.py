@@ -67,21 +67,21 @@ def login_view(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            auth_login(request, user)
 
-            # Redirección según rol
+            # Se decide el destino ANTES de iniciar sesión: un usuario sin rol
+            # no debe quedar autenticado.
             if is_admin_user(user):
-                return redirect("registrar_usuario")
-            elif user_in_groups(user, ["Supervisor"]):
-                return redirect("index")
-            elif user_in_groups(user, ["Bodega"]):
-                return redirect("index")
-            elif user_in_groups(user, ["Enfermero"]):
-                return redirect("tablero")
+                destino = "registrar_usuario"
+            elif can_manage_data(user):
+                destino = "index"
+            elif can_view_tablero(user):
+                destino = "tablero"
             else:
-                # Si no tiene grupo, lo mandamos a login o index como fallback
                 messages.error(request, "Tu usuario no tiene un rol asignado en el sistema.")
                 return redirect("login")
+
+            auth_login(request, user)
+            return redirect(destino)
     else:
         form = AuthenticationForm(request)
 

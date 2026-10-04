@@ -54,6 +54,30 @@ class EliminarInsumoTest(BaseTest):
         self.assertContains(respuesta, "tiene movimientos registrados")
 
 
+class LoginTest(TestCase):
+
+    def login(self, username):
+        return self.client.post(reverse("login"), {"username": username, "password": CLAVE})
+
+    def test_usuario_sin_rol_no_inicia_sesion(self):
+        crear_usuario("sinrol")
+        self.login("sinrol")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_redireccion_por_rol(self):
+        destinos = {
+            "Administrador": "registrar_usuario",
+            "Supervisor": "index",
+            "Bodega": "index",
+            "Enfermero": "tablero",
+        }
+        for rol, destino in destinos.items():
+            with self.subTest(rol=rol):
+                crear_usuario(rol.lower(), rol)
+                self.assertRedirects(self.login(rol.lower()), reverse(destino), fetch_redirect_response=False)
+                self.client.logout()
+
+
 class RegistrarMovimientoTest(BaseTest):
 
     def registrar(self, **cambios):
