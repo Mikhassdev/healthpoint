@@ -90,6 +90,25 @@ class PermisosEnPlantillasTest(BaseTest):
         self.assertNotContains(self.client.get(reverse("tablero")), "Eliminar")
 
 
+class TableroTest(BaseTest):
+
+    def test_indicador_cuenta_todos_los_movimientos(self):
+        """El tablero lista los últimos 20, pero el indicador debe mostrar el total."""
+        Movimiento.objects.bulk_create([
+            Movimiento(tipo=Movimiento.ENTRADA, insumo=self.insumo, box=self.box, cantidad=1)
+            for _ in range(25)
+        ])
+        respuesta = self.client.get(reverse("tablero"))
+        self.assertEqual(respuesta.context["total_movimientos"], 25)
+        self.assertEqual(len(respuesta.context["movimientos"]), 20)
+
+    def test_stock_actual_y_alerta(self):
+        Movimiento.objects.create(tipo=Movimiento.SALIDA, insumo=self.insumo, box=self.box, cantidad=8)
+        insumo = self.client.get(reverse("tablero")).context["insumos"][0]
+        self.assertEqual(insumo.stock_actual, 2)
+        self.assertTrue(insumo.en_alerta)
+
+
 class RegistrarMovimientoTest(BaseTest):
 
     def registrar(self, **cambios):

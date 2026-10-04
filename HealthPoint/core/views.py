@@ -363,6 +363,7 @@ def tablero(request):
     return render(request, 'tablero.html', {
         'insumos': insumos,
         'movimientos': movimientos_recientes,
+        'total_movimientos': Movimiento.objects.count(),
         'boxes': boxes,
     })
 
