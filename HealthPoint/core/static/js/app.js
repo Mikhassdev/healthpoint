@@ -217,13 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // VALIDACIÓN LOGIN HEALTHPOINT
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('Login JS cargado ✅');  // para comprobar en consola
-
   const loginForm = document.getElementById('login-form');
-  if (!loginForm) {
-    console.log('No se encontró #login-form, no estamos en la página de login.');
-    return;
-  }
+  if (!loginForm) return; // no estamos en la página de login
 
   const usernameInput = loginForm.querySelector('#id_username');
   const passwordInput = loginForm.querySelector('#id_password');
@@ -235,66 +230,20 @@ document.addEventListener('DOMContentLoaded', () => {
     elError.textContent = message || '';
   }
 
-  function validateUsername() {
-    if (!usernameInput) return true;
-    const value = (usernameInput.value || '').trim();
-
-    if (!value) {
-      showError(userError, 'El campo Usuario es obligatorio.');
-      usernameInput.classList.add('input-error');
-      return false;
-    }
-
-    // Solo letras a-z o A-Z
-    if (!/^[A-Za-z]+$/.test(value)) {
-      showError(userError, 'Solo se permiten letras mayúsculas y minúsculas.');
-      usernameInput.classList.add('input-error');
-      return false;
-    }
-
-    showError(userError, '');
-    usernameInput.classList.remove('input-error');
-    return true;
+  // En el login solo se exige que los campos no estén vacíos. Las reglas de
+  // formato (usuario, complejidad de la clave) se aplican al CREAR la cuenta;
+  // aplicarlas aquí bloqueaba a usuarios válidos, como "bodega_1" o un
+  // superusuario creado con createsuperuser.
+  function validateRequired(input, elError, label) {
+    if (!input) return true;
+    const ok = (input.value || '').length > 0;
+    showError(elError, ok ? '' : `El campo ${label} es obligatorio.`);
+    input.classList.toggle('input-error', !ok);
+    return ok;
   }
 
-  function validatePassword() {
-    if (!passwordInput) return true;
-    const value = (passwordInput.value || '').trim();
-
-    if (!value) {
-      showError(passError, 'El campo Contraseña es obligatorio.');
-      passwordInput.classList.add('input-error');
-      return false;
-    }
-
-    if (value.length < 5) {
-      showError(passError, 'Debe tener al menos 5 caracteres.');
-      passwordInput.classList.add('input-error');
-      return false;
-    }
-
-    if (!/[A-Z]/.test(value)) {
-      showError(passError, 'Debe contener al menos una letra mayúscula.');
-      passwordInput.classList.add('input-error');
-      return false;
-    }
-
-    if (!/[0-9]/.test(value)) {
-      showError(passError, 'Debe contener al menos un número.');
-      passwordInput.classList.add('input-error');
-      return false;
-    }
-
-    if (!/[^A-Za-z0-9]/.test(value)) {
-      showError(passError, 'Debe incluir al menos un carácter especial.');
-      passwordInput.classList.add('input-error');
-      return false;
-    }
-
-    showError(passError, '');
-    passwordInput.classList.remove('input-error');
-    return true;
-  }
+  const validateUsername = () => validateRequired(usernameInput, userError, 'Usuario');
+  const validatePassword = () => validateRequired(passwordInput, passError, 'Contraseña');
 
   // Validación en tiempo real
   if (usernameInput) {
@@ -314,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!okUser || !okPass) {
       e.preventDefault();
-      console.log('Submit bloqueado por validación del login.');
     }
   });
 });
