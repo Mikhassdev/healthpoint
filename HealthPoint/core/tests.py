@@ -78,6 +78,18 @@ class LoginTest(TestCase):
                 self.client.logout()
 
 
+class PermisosEnPlantillasTest(BaseTest):
+
+    def test_superusuario_ve_boton_eliminar(self):
+        """Las plantillas deben dar al superusuario los mismos permisos que las vistas."""
+        self.client.force_login(User.objects.create_superuser("root", password=CLAVE))
+        self.assertContains(self.client.get(reverse("tablero")), "Eliminar")
+
+    def test_enfermero_no_ve_boton_eliminar(self):
+        self.client.force_login(crear_usuario("enfermero", "Enfermero"))
+        self.assertNotContains(self.client.get(reverse("tablero")), "Eliminar")
+
+
 class RegistrarMovimientoTest(BaseTest):
 
     def registrar(self, **cambios):
