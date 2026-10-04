@@ -24,9 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-solo-para-desarrollo-local")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Por defecto queda activo para desarrollo local. En un servidor se define
+# DJANGO_DEBUG=False y la lista de dominios en DJANGO_ALLOWED_HOSTS.
+DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [h for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if h]
 
 
 # Application definition
@@ -111,19 +113,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'  #código de idioma
+LANGUAGE_CODE = 'es-cl'  #código de idioma
 
-TIME_ZONE = 'UTC'   #zona horaria
+TIME_ZONE = 'America/Santiago'   #zona horaria
 
 USE_I18N = True     #habilitar la internacionalización
 
 USE_TZ = True    #habilitar el soporte de zonas horarias
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
