@@ -128,6 +128,15 @@ class TableroTest(BaseTest):
         self.assertTrue(insumo.en_alerta)
 
 
+class PanelRegistroTest(BaseTest):
+
+    def test_formulario_de_movimiento_ofrece_insumos_y_boxes(self):
+        """Elegir de una lista evita errores de tipeo en los nombres."""
+        html = self.client.get(reverse("index")).content.decode()
+        self.assertIn('<option value="Guantes nitrilo M">', html)
+        self.assertIn('<option value="Box 1">', html)
+
+
 class AdminTest(BaseTest):
 
     def test_modelos_disponibles_en_el_admin(self):

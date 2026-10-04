@@ -102,6 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'desconocido';
   }
 
+  // Lista desplegable obligatoria: basta con que haya una opción elegida.
+  function validateSelect(el, display) {
+    const ok = !!el.value;
+    if (display) { ok ? clearError(el) : setError(el, msg.required); }
+    return ok;
+  }
+
   forms.forEach(form => {
     const kind = kindFromActionOrFields(form);
     const submitBtn = form.querySelector('button[type="submit"]');
@@ -117,14 +124,10 @@ document.addEventListener('DOMContentLoaded', () => {
         responsable:  (el, disp)=>validateInput(el,'letters',{required:true}, disp),
       },
       mov: {
-        tipo: (el, disp)=>{
-          const ok = !!el.value;
-          if (disp) { ok ? clearError(el) : setError(el, msg.required); }
-          return ok;
-        },
-        insumo:   (el, disp)=>validateInput(el,'letters',{required:true}, disp),
+        tipo:     validateSelect,
+        insumo:   validateSelect,
         cantidad: (el, disp)=>validateInput(el,'number',{required:true, gt0:true}, disp),
-        box:      (el, disp)=>validateInput(el,'alnum',{required:true}, disp),
+        box:      validateSelect,
       }
     }[kind] || {};
 

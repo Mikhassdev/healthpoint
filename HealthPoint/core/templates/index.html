@@ -129,13 +129,23 @@
             </select>
           </label>
           <label>Insumo
-            <input type="text" name="insumo" placeholder="Guantes nitrilo M"  />
+            <select name="insumo">
+              <option value="" disabled selected>Selecciona…</option>
+              {% for insumo in insumos %}
+              <option value="{{ insumo.nombre }}">{{ insumo.nombre }}</option>
+              {% endfor %}
+            </select>
           </label>
           <label>Cantidad
             <input type="number" name="cantidad" min="1" step="1" />
           </label>
           <label>Box
-            <input type="text" name="box" placeholder="Box 1" />
+            <select name="box">
+              <option value="" disabled selected>Selecciona…</option>
+              {% for box in boxes %}
+              <option value="{{ box.nombre }}">{{ box.nombre }}</option>
+              {% endfor %}
+            </select>
           </label>
           <button type="submit" class="btn">Registrar</button>
         </form>
@@ -148,7 +158,7 @@
     <p><strong>HealthPoint</strong> - Proyecto BackEnd</p>
   </footer>
 
-  <script src="{% static 'js/app.js' %}?v=5" defer></script>
+  <script src="{% static 'js/app.js' %}?v=6" defer></script>
 
 </body>
 </html>

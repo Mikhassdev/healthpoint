@@ -88,7 +88,10 @@ def login_view(request):
 @login_required
 @user_passes_test(can_manage_data)
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'index.html', {
+        'insumos': Insumo.objects.order_by('nombre'),
+        'boxes': Box.objects.order_by('nombre'),
+    })
 
 
 # ---------- Registro de insumos, boxes y movimientos ----------
