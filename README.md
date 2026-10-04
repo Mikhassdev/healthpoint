@@ -6,7 +6,14 @@ Aplicación web en **Django** para controlar el inventario de insumos médicos d
 
 Proyecto final de la carrera **Analista Programador** (INACAP, 2025).
 
-> Este repositorio conserva el proyecto **tal como fue evaluado**. Las mejoras posteriores quedarán registradas en el historial de *commits*.
+## Versiones
+
+| Versión | Descripción |
+|---|---|
+| [`v1.0-evaluado`](../../tree/v1.0-evaluado) | El proyecto **tal como fue evaluado**. |
+| [`v1.1`](../../tree/v1.1) | Corrección de errores, validaciones en el servidor, 19 pruebas automáticas y mejoras de uso. Detalle en [CHANGELOG.md](CHANGELOG.md). |
+
+Cada corrección está en su propio *commit*, así que el historial muestra qué se cambió y por qué.
 
 ## Funcionalidades
 
@@ -54,6 +61,8 @@ Cada usuario es redirigido automáticamente a su página según su rol, y las vi
         ├── models.py           ← Insumo, Box, Movimiento
         ├── views.py            ← vistas y control de permisos por rol
         ├── forms.py            ← formulario de creación de usuarios
+        ├── tests.py            ← pruebas automáticas
+        ├── management/         ← comando cargar_demo
         ├── templatetags/       ← filtro has_group para las plantillas
         ├── templates/          ← login, panel, tablero y registro de usuarios
         └── static/             ← estilos, JavaScript e imágenes
@@ -78,7 +87,25 @@ Abre [http://localhost:8000/login/](http://localhost:8000/login/) e inicia sesi�
 
 La base de datos no se incluye en el repositorio; `migrate` crea una vacía.
 
-> Para un entorno distinto al local, define la variable de entorno `DJANGO_SECRET_KEY` y desactiva `DEBUG`.
+### Datos de demostración
+
+Para probar la aplicación sin cargar datos a mano:
+
+```bash
+python manage.py cargar_demo
+```
+
+Crea un usuario por rol (`admin_demo`, `supervisor_demo`, `bodega_demo`, `enfermero_demo`, todos con la clave `demo-healthpoint`), además de insumos, boxes y movimientos de ejemplo. Estas cuentas son solo para uso local.
+
+### Pruebas automáticas
+
+```bash
+python manage.py test core
+```
+
+Las pruebas cubren permisos por rol, redirección del login, reglas de stock, validación de movimientos y eliminación de insumos.
+
+> Para un entorno distinto al local, define las variables de entorno `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False` y `DJANGO_ALLOWED_HOSTS` (dominios separados por coma).
 
 ## Autoría
 
