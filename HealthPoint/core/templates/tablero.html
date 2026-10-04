@@ -120,7 +120,7 @@
                 {% endif %}
               </td>
               <td>
-                {% if user|has_group:"Supervisor" %}
+                {% if puede_eliminar %}
                   <form action="{% url 'eliminar_insumo' i.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit"

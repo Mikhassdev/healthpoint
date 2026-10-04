@@ -354,7 +354,7 @@ def tablero(request):
 
     movimientos_recientes = (
         Movimiento.objects
-        .select_related('insumo', 'box')
+        .select_related('insumo', 'box', 'usuario')
         .order_by('-id')[:20]
     )
 
@@ -364,6 +364,8 @@ def tablero(request):
         'insumos': insumos,
         'movimientos': movimientos_recientes,
         'total_movimientos': Movimiento.objects.count(),
+        # Se calcula una vez aquí en lugar de consultar el rol en cada fila de la tabla.
+        'puede_eliminar': can_delete_insumos(request.user),
         'boxes': boxes,
     })
 

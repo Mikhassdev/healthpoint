@@ -102,6 +102,25 @@ class TableroTest(BaseTest):
         self.assertEqual(respuesta.context["total_movimientos"], 25)
         self.assertEqual(len(respuesta.context["movimientos"]), 20)
 
+    def test_consultas_no_crecen_con_los_movimientos(self):
+        """Evita el problema N+1: mostrar el usuario de cada movimiento no debe sumar consultas."""
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        def contar_consultas():
+            with CaptureQueriesContext(connection) as ctx:
+                self.client.get(reverse("tablero"))
+            return len(ctx.captured_queries)
+
+        Movimiento.objects.create(tipo=Movimiento.ENTRADA, insumo=self.insumo, box=self.box,
+                                  cantidad=1, usuario=self.supervisor)
+        con_uno = contar_consultas()
+        for i in range(10):
+            Movimiento.objects.create(tipo=Movimiento.ENTRADA, insumo=self.insumo, box=self.box,
+                                      cantidad=1, usuario=crear_usuario(f"bodega{i}", "Bodega"))
+            Insumo.objects.create(nombre=f"Insumo {i}", unidad="unidad")
+        self.assertEqual(contar_consultas(), con_uno)
+
     def test_stock_actual_y_alerta(self):
         Movimiento.objects.create(tipo=Movimiento.SALIDA, insumo=self.insumo, box=self.box, cantidad=8)
         insumo = self.client.get(reverse("tablero")).context["insumos"][0]
