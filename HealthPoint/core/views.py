@@ -11,6 +11,7 @@ from django.contrib.auth import login as auth_login
 from .forms import UserCreateForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
+from django.views.decorators.http import require_POST
 import math
 
 # ==============================
@@ -374,6 +375,9 @@ def registrar_usuario(request):
     return render(request, "registrar_usuario.html", {"form": form})
 
 # ---------- Eliminacion de insumos ----------
+# require_POST: una acción que borra datos nunca debe ejecutarse con un simple GET
+# (un enlace, el historial o la precarga del navegador podrían dispararla).
+@require_POST
 @login_required
 @user_passes_test(can_delete_insumos)
 def eliminar_insumo(request, insumo_id):
