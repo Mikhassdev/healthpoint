@@ -74,6 +74,10 @@ class RegistrarMovimientoTest(BaseTest):
         self.registrar(cantidad="0")
         self.assertEqual(Movimiento.objects.count(), 0)
 
+    def test_tipo_invalido_se_rechaza(self):
+        self.registrar(tipo="HACKEO")
+        self.assertEqual(Movimiento.objects.count(), 0)
+
     def test_salida_mayor_al_stock_se_rechaza(self):
         self.registrar(tipo="SALIDA", cantidad="11")
         self.assertEqual(Movimiento.objects.count(), 0)

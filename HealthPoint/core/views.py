@@ -211,6 +211,11 @@ def insert_movimiento(request):
         cantidad_str = request.POST.get("cantidad")
         nota = request.POST.get("nota", "").strip()
 
+        # objects.create() no valida "choices": hay que comprobar el tipo a mano.
+        if tipo not in (Movimiento.ENTRADA, Movimiento.SALIDA):
+            messages.error(request, "Selecciona un tipo de movimiento válido.")
+            return redirect("index")
+
         # 2) Validar cantidad numérica
         try:
             cantidad = int(cantidad_str)
