@@ -44,6 +44,14 @@
   </div>
 </nav>
 
+  {% if messages %}
+  <div id="toast-root" aria-live="polite" aria-atomic="true">
+    {% for message in messages %}
+      <div class="hp-toast {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <!-- ENCABEZADO -->
   <header class="dashboard-header">
     <h2>Tablero de stock y movimientos</h2>
@@ -210,6 +218,8 @@
   <footer class="footer">
     <p><strong>HealthPoint</strong> — Proyecto BackEnd</p>
   </footer>
+
+  <script src="{% static 'js/app.js' %}?v=6" defer></script>
 
 </body>
 </html>

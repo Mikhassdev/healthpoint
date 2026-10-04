@@ -42,3 +42,13 @@ class EliminarInsumoTest(BaseTest):
         respuesta = self.client.post(self.url())
         self.assertRedirects(respuesta, reverse("tablero"))
         self.assertFalse(Insumo.objects.filter(id=self.insumo.id).exists())
+
+    def test_insumo_con_movimientos_no_se_elimina_ni_cae(self):
+        """El historial protege al insumo: se informa al usuario en vez de un error 500."""
+        Movimiento.objects.create(
+            tipo=Movimiento.SALIDA, insumo=self.insumo, box=self.box, cantidad=1, usuario=self.supervisor
+        )
+        respuesta = self.client.post(self.url(), follow=True)
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertTrue(Insumo.objects.filter(id=self.insumo.id).exists())
+        self.assertContains(respuesta, "tiene movimientos registrados")

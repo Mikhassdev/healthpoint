@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, Q, Case, When, IntegerField, Value, F, BooleanField
+from django.db.models.deletion import RestrictedError
 from django.db.models.functions import Coalesce
 from django.contrib import messages
 from .models import Insumo, Box, Movimiento
@@ -382,6 +383,14 @@ def registrar_usuario(request):
 @user_passes_test(can_delete_insumos)
 def eliminar_insumo(request, insumo_id):
     insumo = get_object_or_404(Insumo, id=insumo_id)
-    insumo.delete()
+    try:
+        insumo.delete()
+    except RestrictedError:
+        # Movimiento.insumo usa on_delete=RESTRICT para no perder el historial de stock.
+        messages.error(
+            request,
+            f"No se puede eliminar «{insumo.nombre}» porque tiene movimientos registrados."
+        )
+        return redirect("tablero")
     messages.success(request, f"Insumo «{insumo.nombre}» eliminado correctamente.")
     return redirect("tablero")
