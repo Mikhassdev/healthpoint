@@ -128,6 +128,15 @@ class TableroTest(BaseTest):
         self.assertTrue(insumo.en_alerta)
 
 
+class AdminTest(BaseTest):
+
+    def test_modelos_disponibles_en_el_admin(self):
+        self.client.force_login(User.objects.create_superuser("root", password=CLAVE))
+        for modelo in ("insumo", "box", "movimiento"):
+            with self.subTest(modelo=modelo):
+                self.assertEqual(self.client.get(f"/admin/core/{modelo}/").status_code, 200)
+
+
 class RegistrarMovimientoTest(BaseTest):
 
     def registrar(self, **cambios):
