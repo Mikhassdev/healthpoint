@@ -13,7 +13,7 @@ Proyecto final de la carrera **Analista Programador** (INACAP, 2025).
 | [`v1.0-evaluado`](../../tree/v1.0-evaluado) | El proyecto **tal como fue evaluado**. |
 | [`v1.1`](../../tree/v1.1) | Corrección de errores, validaciones en el servidor, 19 pruebas automáticas y mejoras de uso. Detalle en [CHANGELOG.md](CHANGELOG.md). |
 
-Cada corrección está en su propio *commit*, así que el historial muestra qué se cambió y por qué.
+Cada corrección está en su propio *commit*, así que el historial muestra qué se cambió y por qué. El [mapa conceptual de cambios](docs/MAPA.md) los agrupa por tema.
 
 ## Funcionalidades
 

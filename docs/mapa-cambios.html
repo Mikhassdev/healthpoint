@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa HealthPoint v1.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: un nodo central (la versión) con seis ramas temáticas; cada rama
+     es un árbol de cambios y cada cambio apunta al concepto que enseña. */
+  :root {
+    --bg: #f3f6f9;
+    --surface: #ffffff;
+    --ink: #172331;
+    --muted: #5a6878;
+    --line: #c9d3de;
+    --hub: #15457a;
+    --hub-ink: #ffffff;
+    --chip: #eaf0f6;
+
+    --b-seg: #b4232f;   /* seguridad */
+    --b-dat: #b4630d;   /* datos */
+    --b-ren: #0f7a6a;   /* rendimiento */
+    --b-ui:  #5b3fb0;   /* interfaz */
+    --b-cfg: #2c6aa8;   /* configuración */
+    --b-cal: #3d7a1f;   /* calidad */
+
+    --f-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+    --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f151c; --surface: #17202a; --ink: #e6edf4; --muted: #9aa8b8;
+      --line: #2e3b49; --hub: #3d7fc4; --hub-ink: #ffffff; --chip: #1f2b38;
+      --b-seg: #f0707a; --b-dat: #f0a44f; --b-ren: #4cc7b2; --b-ui: #a690f0;
+      --b-cfg: #6faee8; --b-cal: #8bcf62;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f151c; --surface: #17202a; --ink: #e6edf4; --muted: #9aa8b8;
+    --line: #2e3b49; --hub: #3d7fc4; --hub-ink: #ffffff; --chip: #1f2b38;
+    --b-seg: #f0707a; --b-dat: #f0a44f; --b-ren: #4cc7b2; --b-ui: #a690f0;
+    --b-cfg: #6faee8; --b-cal: #8bcf62;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 15px;
+    line-height: 1.5;
+    padding-inline: 16px;
+    padding-block: 32px 48px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 28px; }
+
+  header { display: grid; gap: 10px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 { margin: 0; font-size: clamp(28px, 4.5vw, 42px); font-weight: 800; line-height: 1.1; text-wrap: balance; }
+  .lead { margin: 0; max-width: 68ch; color: var(--muted); }
+
+  /* Nodo central */
+  .hub-zone { display: grid; justify-items: center; gap: 0; }
+  .hub {
+    background: var(--hub); color: var(--hub-ink);
+    border-radius: 14px; padding: 18px 26px; text-align: center;
+    display: grid; gap: 6px; max-width: 100%;
+  }
+  .hub .ver { font-family: var(--f-mono); font-size: 13px; opacity: .85; }
+  .hub strong { font-size: 22px; font-weight: 800; }
+  .stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .stats b { font-size: 16px; }
+  .trunk { width: 2px; height: 28px; background: var(--line); }
+  .bar { height: 2px; background: var(--line); width: 100%; }
+
+  /* Ramas */
+  .branches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 22px;
+  }
+  .branch { display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .branch-head {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: 16px;
+  }
+  .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--c); flex: none; }
+  .branch-head small { font-weight: 500; color: var(--muted); font-size: 13px; }
+
+  .tree { list-style: none; margin: 0; padding: 0 0 0 6px; display: grid; gap: 10px; border-left: 2px solid var(--c); }
+  .node {
+    position: relative; margin-left: 16px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 12px; display: grid; gap: 6px; min-width: 0;
+  }
+  .node::before {
+    content: ""; position: absolute; left: -24px; top: 20px; width: 22px; height: 2px; background: var(--c);
+  }
+  .change { font-weight: 600; }
+  .why { font-size: 13.5px; color: var(--muted); }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .concept {
+    font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px;
+    background: var(--chip); color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+  }
+  .sha { font-family: var(--f-mono); font-size: 12px; color: var(--muted); text-decoration: none; }
+  a.sha:hover, a.sha:focus-visible { color: var(--ink); text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--hub); outline-offset: 2px; border-radius: 3px; }
+
+  .b-seg { --c: var(--b-seg); } .b-dat { --c: var(--b-dat); } .b-ren { --c: var(--b-ren); }
+  .b-ui  { --c: var(--b-ui); }  .b-cfg { --c: var(--b-cfg); } .b-cal { --c: var(--b-cal); }
+
+  footer { font-size: 13px; color: var(--muted); }
+  footer code { font-family: var(--f-mono); font-size: 12px; }
+
+  @media (max-width: 720px) { .bar { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Proyecto de título · Mapa conceptual de cambios</span>
+    <h1>HealthPoint: de v1.0-evaluado a v1.1</h1>
+    <p class="lead">Cada nodo es un cambio con su propio commit. La etiqueta de color indica el concepto técnico que hay detrás de cada cambio.</p>
+  </header>
+
+  <div class="hub-zone">
+    <div class="hub">
+      <span class="ver">v1.0-evaluado → v1.1</span>
+      <strong>HealthPoint v1.1</strong>
+      <div class="stats">
+        <span><b>11</b> errores corregidos</span>
+        <span><b>19</b> pruebas automáticas</span>
+        <span><b>20</b> commits</span>
+      </div>
+    </div>
+    <div class="trunk"></div>
+    <div class="bar"></div>
+  </div>
+
+  <div class="branches">
+
+    <section class="branch b-seg" aria-labelledby="h-seg">
+      <div class="branch-head" id="h-seg"><span class="dot"></span>Seguridad y permisos <small>3 cambios</small></div>
+      <ul class="tree">
+        <li class="node">
+          <span class="change">Eliminar insumos solo con POST</span>
+          <span class="why">Antes bastaba con visitar la URL para borrar un insumo.</span>
+          <span class="meta"><span class="concept">Métodos HTTP seguros</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/ebcd6f8">ebcd6f8</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Un usuario sin rol no inicia sesión</span>
+          <span class="why">Se le mostraba un error, pero quedaba autenticado.</span>
+          <span class="meta"><span class="concept">Autenticación vs. autorización</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/e89128c">e89128c</a></span>
+        </li>
+        <li class="node">
+          <span class="change">El superusuario ve las acciones que puede hacer</span>
+          <span class="why">Vistas y plantillas usaban reglas distintas; ahora comparten una.</span>
+          <span class="meta"><span class="concept">Una sola fuente de verdad</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/489e16d">489e16d</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="branch b-dat" aria-labelledby="h-dat">
+      <div class="branch-head" id="h-dat"><span class="dot"></span>Integridad de datos <small>3 cambios</small></div>
+      <ul class="tree">
+        <li class="node">
+          <span class="change">Sin error 500 al eliminar un insumo con movimientos</span>
+          <span class="why">La base de datos protegía el historial y la vista no manejaba ese caso.</span>
+          <span class="meta"><span class="concept">Integridad referencial (RESTRICT)</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/73e62f6">73e62f6</a></span>
+        </li>
+        <li class="node">
+          <span class="change">La cantidad debe ser mayor a 0</span>
+          <span class="why">El min="1" del HTML se puede saltar; un -5 hacía caer la aplicación.</span>
+          <span class="meta"><span class="concept">Validar en el servidor</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/0cc7ea7">0cc7ea7</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Solo se aceptan ENTRADA y SALIDA</span>
+          <span class="why">objects.create() no revisa las opciones del modelo.</span>
+          <span class="meta"><span class="concept">choices vs. validación</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/40e2fd4">40e2fd4</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="branch b-ren" aria-labelledby="h-ren">
+      <div class="branch-head" id="h-ren"><span class="dot"></span>Tablero y rendimiento <small>2 cambios</small></div>
+      <ul class="tree">
+        <li class="node">
+          <span class="change">El indicador muestra el total real de movimientos</span>
+          <span class="why">Contaba la lista de los últimos 20, así que nunca pasaba de 20.</span>
+          <span class="meta"><span class="concept">Listado vs. agregado</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/d9ead65">d9ead65</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Menos consultas a la base de datos</span>
+          <span class="why">Cada fila disparaba una consulta extra: 22 consultas en vez de 12.</span>
+          <span class="meta"><span class="concept">Problema N+1 · select_related</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/6f14094">6f14094</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="branch b-ui" aria-labelledby="h-ui">
+      <div class="branch-head" id="h-ui"><span class="dot"></span>Interfaz y navegador <small>6 cambios</small></div>
+      <ul class="tree">
+        <li class="node">
+          <span class="change">El login ya no bloquea a usuarios válidos</span>
+          <span class="why">Exigía reglas que Django no impone; lo detectó la prueba en el navegador.</span>
+          <span class="meta"><span class="concept">Cliente coherente con servidor</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/7816a84">7816a84</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Se aceptan nombres como "Jeringa 5 ml"</span>
+          <span class="why">La validación solo admitía letras.</span>
+          <span class="meta"><span class="concept">Expresiones regulares</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/d24ddd7">d24ddd7</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Insumo y box se eligen de una lista</span>
+          <span class="why">Escribirlos a mano producía errores de tipeo.</span>
+          <span class="meta"><span class="concept">Prevenir antes que corregir</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/e864581">e864581</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Se agrega el campo de nota</span>
+          <span class="why">El modelo y el tablero la tenían, el formulario no.</span>
+          <span class="meta"><span class="concept">Coherencia modelo–formulario</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/734ea55">734ea55</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Confirmación antes de eliminar</span>
+          <span class="why">Un clic borraba de inmediato.</span>
+          <span class="meta"><span class="concept">Acciones destructivas</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/dfc222e">dfc222e</a></span>
+        </li>
+        <li class="node">
+          <span class="change">"Index" pasa a "Panel de registro"</span>
+          <span class="why">Nombre técnico reemplazado por uno que entiende el usuario.</span>
+          <span class="meta"><span class="concept">Lenguaje del usuario</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/7d9544d">7d9544d</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="branch b-cfg" aria-labelledby="h-cfg">
+      <div class="branch-head" id="h-cfg"><span class="dot"></span>Configuración y mantenimiento <small>4 cambios</small></div>
+      <ul class="tree">
+        <li class="node">
+          <span class="change">DEBUG por variable de entorno, idioma es-cl y hora de Chile</span>
+          <span class="why">La configuración de producción no debe vivir en el código.</span>
+          <span class="meta"><span class="concept">Variables de entorno</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/922eac9">922eac9</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Dependencias depuradas y Django fijado a 5.2</span>
+          <span class="why">Se instalaban paquetes que el proyecto no usaba.</span>
+          <span class="meta"><span class="concept">Gestión de dependencias</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/9399b0b">9399b0b</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Código muerto e imports sin uso eliminados</span>
+          <span class="why">Una clase sin usar llamaba a una función inexistente.</span>
+          <span class="meta"><span class="concept">Deuda técnica</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/9632e7f">9632e7f</a></span>
+        </li>
+        <li class="node">
+          <span class="change">Insumos, boxes y movimientos en el admin</span>
+          <span class="why">El panel de administración solo mostraba usuarios.</span>
+          <span class="meta"><span class="concept">Django admin</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/8736ed1">8736ed1</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="branch b-cal" aria-labelledby="h-cal">
+      <div class="branch-head" id="h-cal"><span class="dot"></span>Calidad y documentación <small>3 cambios</small></div>
+      <ul class="tree">
+        <li class="node">
+          <span class="change">19 pruebas automáticas</span>
+          <span class="why">Cada error tuvo primero una prueba que fallaba y después el arreglo que la hace pasar.</span>
+          <span class="meta"><span class="concept">Pruebas automáticas · TDD</span><span class="sha">en cada commit</span></span>
+        </li>
+        <li class="node">
+          <span class="change">Comando cargar_demo</span>
+          <span class="why">Un usuario por rol y datos de ejemplo para probar sin cargar nada a mano.</span>
+          <span class="meta"><span class="concept">Datos semilla</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/98bace2">98bace2</a></span>
+        </li>
+        <li class="node">
+          <span class="change">README con versiones y CHANGELOG</span>
+          <span class="why">Las etiquetas v1.0-evaluado y v1.1 permiten comparar antes y después.</span>
+          <span class="meta"><span class="concept">Versionado con etiquetas Git</span><a class="sha" href="https://github.com/Mikhassdev/healthpoint/commit/d184a65">d184a65</a></span>
+        </li>
+      </ul>
+    </section>
+
+  </div>
+
+
+  <footer>
+    Detalle completo en <code>CHANGELOG.md</code>. Para comparar versiones: <code>git diff v1.0-evaluado v1.1</code>.
+  </footer>
+</div>
+</body>
+</html>
